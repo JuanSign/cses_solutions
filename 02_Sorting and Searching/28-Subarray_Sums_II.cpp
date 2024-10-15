@@ -14,7 +14,7 @@ int main()
 	long long data[n];
 	for(int i = 0; i < n; i++) cin >> data[i];
 	
-	//unordered_map to count apperance of prefix sum
+	//map to count apperance of prefix sum
 	map<long long, long long> count;
 	count[0] = 1;
 	
