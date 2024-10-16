@@ -23,7 +23,7 @@ int main()
 	
 	//maintain a multiset to store the prefix sum of all considered subarray
 	multiset<long long> sums;
-	//subarrau sum of a subarray that starts in a and ends in b is
+	//subarray sum of a subarray that starts in a and ends in b is
 	//pref[b]-pref[a-1]
 	//so if were in pref[i], the maximum subarray with a <= length <= b is
 	//max(pref[i+a]...pref[i+b]) - pref[i]
