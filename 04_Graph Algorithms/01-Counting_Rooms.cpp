@@ -9,42 +9,48 @@ int main()
 {
 	fastio()
 	
-	//input data
-	int row, col; cin >> row >> col;
-	string map[row];
-	for(int i = 0; i < row; i++) cin >> map[i];
+	//input n,m
+	int n,m; cin >> n >> m;
 	
-	int ans = 0;	
-
-	//iterate every cell	
-	//increment count then start bfs on a cell that is not '#'
-	//change the value of visited cell with '#'
-	for(int i = 0; i < row; i++)
+	//input building
+	string building[n];
+	for(int i = 0; i < n; i++) cin >> building[i];	
+		
+	//declare room count
+	int count = 0;
+	
+	//start bfs on every '.' cell
+	for(int i = 0; i < n; i++)
 	{
-		for(int j = 0; j < col; j++)
+		for(int j = 0; j < m; j++)
 		{
-			if(map[i][j] == '#') continue;
-			//increment ans
-			ans++;
-			//bfs
-			queue<pair<int,int>> q;
-			q.push({i,j});
-	
-			while(!q.empty())
+			if(building[i][j] != '#')
 			{
-				pair<int,int> cur = q.front();
-				q.pop();
-				if(map[cur.first][cur.second] == '#') continue;
+				//increment count
+				count++;
+				
+				//start bfs
+				queue<pair<int,int>> q;
+				q.push({i,j});
 	
-				if(cur.first-1 >= 0) q.push({cur.first-1,cur.second});
-				if(cur.second+1 < col) q.push({cur.first,cur.second+1});
-				if(cur.first+1 < row) q.push({cur.first+1,cur.second});
-				if(cur.second-1 >= 0) q.push({cur.first,cur.second-1});
-	
-				map[cur.first][cur.second] = '#';
+				while(!q.empty())
+				{
+					pair<int,int> cur = q.front();
+					q.pop();
+					//if visiting a wall, continue
+					if(building[cur.first][cur.second] == '#') continue;
+					
+					//check all possible neighbors
+					if(cur.first+1 < n) q.push({cur.first+1,cur.second});
+					if(cur.first-1 >= 0) q.push({cur.first-1,cur.second});
+					if(cur.second+1 < m) q.push({cur.first,cur.second+1});					
+					if(cur.second-1 >= 0) q.push({cur.first,cur.second-1});
+
+					//mark visited
+					building[cur.first][cur.second] = '#';
+				}
 			}
 		}
 	}
-	
-	cout << ans << nn;
+	cout << count << nn;
 }

@@ -9,13 +9,13 @@ int main()
 {
 	fastio()
 	
-	//input n and m
+	//input n,m
 	int n,m; cin >> n >> m;
-		
-	//create required data
+	
+	//create adjacency list
 	vector<vector<int>> adj(n+1);
-	vector<bool> visited(n+1, false);
-	vector<int> parent(n+1,-1);
+	//par[i] := parent node of node i (-1 if not reached yet)
+	vector<int> par(n+1,-1);
 	
 	//input edges
 	for(int i = 0; i < m; i++)
@@ -24,47 +24,54 @@ int main()
 		adj[a].push_back(b);
 		adj[b].push_back(a);
 	}
-	
-	//since distance is irrelevant, bfs is good enough
+		
+	//start bfs from 1
 	queue<int> q;
-	q.push(1);
-	parent[1] = 1;
 	
-	//bfs
-	while(!q.empty())	
+	q.push(1);
+	par[1] = 1;	
+
+	while(!q.empty())
 	{
 		int cur = q.front();
 		q.pop();
-		visited[cur] = true;
 		if(cur == n) break;
 		for(int child : adj[cur])
 		{
-			if(!visited[child]) 
+			if(par[child] == -1)
 			{
+				par[child] = cur;
 				q.push(child);
-				visited[child] = true;
-				parent[child] = cur;
 			}
 		}
 	}
-	
-	//check if n is visited
-	if(visited[n])
+
+	//check if n is reached
+	if(par[n] != -1)
 	{
 		//generate path
-		vector<int> path;
+		vector<int> path;	
+	
 		int cur = n;
-		while(parent[cur] != cur)
+		while(par[cur] != cur)
 		{
 			path.push_back(cur);
-			cur = parent[cur];
-		}
-
-		//output
-		cout << path.size()+1 << nn;
-		reverse(path.begin(),path.end());
-		cout << 1 << " ";
-		for(int i : path) cout << i << " ";
+			cur = par[cur];
+		}	
+		path.push_back(cur);
+	
+		cout << path.size() << nn;
+		for(int i = (int)path.size()-1; i >= 0; i--) cout << path[i] << " ";
+		cout << nn;
 	}
 	else cout << "IMPOSSIBLE" << nn;
+
+
+
+
+
+
+	
+	
+	
 }

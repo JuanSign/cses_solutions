@@ -5,34 +5,36 @@ using namespace std;
 #define nn '\n'
 #define fastio() ios_base::sync_with_stdio(false); cin.tie(NULL);
 
-//declare global
+//adjacency list
 vector<vector<int>> adj;
-vector<bool> vis;
-vector<bool> team;
+//visited and team vector
+vector<bool> vis, team;
+//condition checker
 bool possible = true;
 
-//recursive dfs
-void dfs(int cur, int parent = 0)
+//recursive dfs (current, parent)
+void dfs(int cur, int par = 0)
 {
-	//iterate every child(neighbor) of cur
+	//mark visited
+	vis[cur] = true;
+	
+	//check every neighbor
 	for(int child : adj[cur])
 	{
-		//if not a cycle
-		if(child != parent)
+		//avoid backtrack
+		if(child != par)
 		{
-			//if child not visited
+			//if not visited
 			if(!vis[child])
 			{
-				//mark visited
-				vis[child] = true;
-				//put in different team than parent
+				//assign to different team
 				team[child] = !team[cur];
-				//dfs from child
-				dfs(child, cur);
+				//start recursion
+				dfs(child,cur);
 			}
 			else
-			{	
-				//if child and parent in the same team, then impossible
+			{
+				//check if in the same team
 				if(team[child] == team[cur]) possible = false;
 			}
 		}
@@ -43,12 +45,13 @@ int main()
 {
 	fastio()
 	
-	//input n m
+	//input n,m
 	int n,m; cin >> n >> m;
-	//resize vector
+	
+	//resizing
 	adj.resize(n+1);
-	vis.resize(n+1,false);
-	team.resize(n+1,false);
+	vis.resize(n+1, false);
+	team.resize(n+1, false);
 	
 	//input edges
 	for(int i = 0; i < m; i++)
@@ -57,19 +60,16 @@ int main()
 		adj[a].push_back(b);
 		adj[b].push_back(a);
 	}
-	
+
+	//dfs on every unvisited node
 	for(int i = 1; i <= n; i++)
-	{
-		if(!vis[i])
-		{
-			vis[i] = true;
-			dfs(i);
-		}
-	}
-	
-	if(!possible) cout << "IMPOSSIBLE" << nn;
-	else
+		if(!vis[i]) dfs(i);	
+
+	if(possible)
 	{
 		for(int i = 1; i <= n; i++) cout << 1+team[i] << " ";
+		cout << nn;
 	}
+	else cout << "IMPOSSIBLE" << nn;
+
 }

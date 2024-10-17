@@ -5,55 +5,53 @@ using namespace std;
 #define nn '\n'
 #define fastio() ios_base::sync_with_stdio(false); cin.tie(NULL);
 
-//declare as global
+//adjacency list
 vector<vector<int>> adj;
-vector<bool> visited;
+//visited vector
+vector<bool> vis;
+//representation of each disjoint graph
 vector<int> graph;
 
 //recursive dfs
 void dfs(int i)
 {
-	visited[i] = true;
+	vis[i] = true;
 	for(int child : adj[i])
 	{
-		if(!visited[child]) dfs(child);
+		if(!vis[child]) dfs(child);
 	}
 }
+
 
 int main()
 {
 	fastio()
 	
-	//input n and m
+	//input n,m
 	int n,m; cin >> n >> m;
 	
-	//resize 
+	//resizing
 	adj.resize(n+1);
-	visited.resize(n+1);
-	
+	vis.resize(n+1, false);
+		
 	//input edges
 	for(int i = 0; i < m; i++)
 	{
 		int a,b; cin >> a >> b;
 		adj[a].push_back(b);
 		adj[b].push_back(a);
-	}
-	
-	//run dfs on every unvisited node
+	}	
+
+	//start dfs from each unvisited node
 	for(int i = 1; i <= n; i++)
-	{
-		if(!visited[i])
+		if(!vis[i]) 
 		{
 			graph.push_back(i);
 			dfs(i);
 		}
-	}
 	
+	//output
 	cout << graph.size()-1 << nn;
 	for(int i = 1; i < (int)graph.size(); i++)
-	{	
-		//connect every graph to the first graph
 		cout << graph[0] << " " << graph[i] << nn;
-	}
-
 }
