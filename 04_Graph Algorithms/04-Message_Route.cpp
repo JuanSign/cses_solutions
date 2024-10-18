@@ -5,73 +5,99 @@ using namespace std;
 #define nn '\n'
 #define fastio() ios_base::sync_with_stdio(false); cin.tie(NULL);
 
-int main()
-{
-	fastio()
-	
-	//input n,m
-	int n,m; cin >> n >> m;
-	
-	//create adjacency list
-	vector<vector<int>> adj(n+1);
-	//par[i] := parent node of node i (-1 if not reached yet)
-	vector<int> par(n+1,-1);
-	
-	//input edges
-	for(int i = 0; i < m; i++)
-	{
-		int a,b; cin >> a >> b;
-		adj[a].push_back(b);
-		adj[b].push_back(a);
-	}
-		
-	//start bfs from 1
-	queue<int> q;
-	
-	q.push(1);
-	par[1] = 1;	
+//N := number of computers
+//M := number of connections
+//con[i][j] := the j-th connection of the i-th computer
+//vis[i] := true if the i-th computer is visited, otherwise false
+//par[i] := parent of computer-i
+//S := start computer
+//E := end computer
 
+int N, M;
+vector<vector<int>> con;
+vector<int> par;
+vector<bool> vis;
+int S,E;
+
+void bfs()
+{
+	//create bfs queue
+	queue<int> q;
+		
+	//insert source to q
+	q.push(S);
+	//mark source as visited
+	vis[S] = true;
+	
+	//bfs
 	while(!q.empty())
 	{
-		int cur = q.front();
+		//current computer
+		int cC = q.front();
 		q.pop();
-		if(cur == n) break;
-		for(int child : adj[cur])
+		//check end condition
+		if(cC == E) break;
+	
+		//push all unvisited neighbor to queue
+		for(int uN : con[cC])
 		{
-			if(par[child] == -1)
+			if(!vis[uN])
 			{
-				par[child] = cur;
-				q.push(child);
+				vis[uN] = true;
+				par[uN] = cC;
+				q.push(uN);
 			}
 		}
 	}
+}
 
-	//check if n is reached
-	if(par[n] != -1)
+int main()
+{
+	fastio()
+
+	//input N and M
+	cin >> N >> M;
+	
+	//resizing
+	con.resize(N+1);
+	par.resize(N+1, -1); //initially all -1
+	vis.resize(N+1, false);
+	
+	//input all connections
+	for(int i = 0; i < M; i++)
+	{
+		int a,b; cin >> a >> b;
+		con[a].push_back(b);
+		con[b].push_back(a);
+	}
+	
+	//start bfs from 1
+	S = 1;
+	E = N;
+	bfs();
+	
+	//check if E has a parent
+	if(par[E] != -1)
 	{
 		//generate path
-		vector<int> path;	
+		deque<int> path;
 	
-		int cur = n;
-		while(par[cur] != cur)
+		int cC = E;
+		while(par[cC] != -1)
 		{
-			path.push_back(cur);
-			cur = par[cur];
+			path.push_front(cC);
+			cC = par[cC];		
+		}
+		path.push_front(S);
+		
+		//output
+		cout << (int)path.size() << nn;
+		while(!path.empty()) 
+		{
+			cout << path.front() << " ";	
+			path.pop_front();
 		}	
-		path.push_back(cur);
-	
-		cout << path.size() << nn;
-		for(int i = (int)path.size()-1; i >= 0; i--) cout << path[i] << " ";
 		cout << nn;
 	}
 	else cout << "IMPOSSIBLE" << nn;
-
-
-
-
-
-
-	
-	
-	
 }

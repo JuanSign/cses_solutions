@@ -5,38 +5,39 @@ using namespace std;
 #define nn '\n'
 #define fastio() ios_base::sync_with_stdio(false); cin.tie(NULL);
 
-//adjacency list
-vector<vector<int>> adj;
-//visited and team vector
-vector<bool> vis, team;
-//condition checker
-bool possible = true;
+//N := number of pupils
+//M := number of friendships (connections)
+//con[i][j] := the j-th connection of the i-th pupil
+//team[i] := true if the i-th pupil is in team 1, false otherwise
+//vis[i] := true if the i-th pupil is visited, false otherwise
+//possible := true if possible to fulfill the condition, false otherwise
 
-//recursive dfs (current, parent)
-void dfs(int cur, int par = 0)
+int N, M;
+vector<vector<int>> con;
+vector<bool> team, vis;
+bool possible = true; //assume true
+
+//recursive dfs(current, parent)
+void dfs(int c, int p = 0) //default value 0
 {
-	//mark visited
-	vis[cur] = true;
-	
-	//check every neighbor
-	for(int child : adj[cur])
+	vis[c] = true;
+	for(int n : con[c])
 	{
-		//avoid backtrack
-		if(child != par)
+		//check all neighbor that is not the parent
+		if(n == p) continue;
+		//if neighbor is not visited yet
+		if(!vis[n])
 		{
-			//if not visited
-			if(!vis[child])
-			{
-				//assign to different team
-				team[child] = !team[cur];
-				//start recursion
-				dfs(child,cur);
-			}
-			else
-			{
-				//check if in the same team
-				if(team[child] == team[cur]) possible = false;
-			}
+			//assign to different team
+			team[n] = !team[c];
+			//start dfs from that node
+			dfs(n,c);
+		}
+		else
+		{
+			//if node is already visited and in the same team as c
+			//impossible
+			if(team[n] == team[c]) possible = false;
 		}
 	}
 }
@@ -45,31 +46,32 @@ int main()
 {
 	fastio()
 	
-	//input n,m
-	int n,m; cin >> n >> m;
+	//input N and M
+	cin >> N >> M;
 	
 	//resizing
-	adj.resize(n+1);
-	vis.resize(n+1, false);
-	team.resize(n+1, false);
+	con.resize(N+1);
+	team.resize(N+1, false); //initially all false
+	vis.resize(N+1, false); //initially all false	
 	
-	//input edges
-	for(int i = 0; i < m; i++)
+	//input all friendships
+	for(int i = 0; i < M; i++)
 	{
 		int a,b; cin >> a >> b;
-		adj[a].push_back(b);
-		adj[b].push_back(a);
+		con[a].push_back(b);
+		con[b].push_back(a);
 	}
-
-	//dfs on every unvisited node
-	for(int i = 1; i <= n; i++)
-		if(!vis[i]) dfs(i);	
-
+	
+	//run dfs on every unvisited node
+	for(int i = 1; i <= N; i++)
+		if(!vis[i]) dfs(i);
+	
+	//check possibility
 	if(possible)
 	{
-		for(int i = 1; i <= n; i++) cout << 1+team[i] << " ";
+		//output answer
+		for(int i = 1 ; i <= N; i++) cout << 1+team[i] << " ";
 		cout << nn;
 	}
 	else cout << "IMPOSSIBLE" << nn;
-
 }
